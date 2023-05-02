@@ -1,0 +1,6 @@
+{
+    "name": "hyperlight",
+    "dependencies": {
+        "hyperapp": "2.0.18"
+    }
+}

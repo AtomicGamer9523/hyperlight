@@ -1,0 +1,26 @@
+{
+  "name": "basic",
+  "type": "module",
+  "private": true,
+  "scripts": {
+    "build": "hl build",
+    "serve": "hl serve",
+    "start": "hl build && hl serve",
+    "dev": "hl dev"
+  },
+  "keywords": [],
+  "author": "",
+  "engines": {
+    "node": ">=12.4"
+  },
+  "license": "MIT",
+  "dependencies": {
+    "@hyperlight/jsx": "workspace:*",
+    "hyperapp": "^2.0.12",
+    "hyperlight": "workspace:^0.0.32"
+  },
+  "devDependencies": {
+    "@tinyhttp/app": "^1.1.5"
+  },
+  "version": "0.0.2"
+}
