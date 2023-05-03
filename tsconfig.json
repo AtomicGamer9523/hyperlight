@@ -1,22 +1,5 @@
 {
     "compilerOptions": {
-        "jsx": "preserve",
-        "target": "esnext",
-        "module": "esnext",
-        "moduleResolution": "Node",
-        "esModuleInterop": true,
-        "allowSyntheticDefaultImports": true,
-        "declaration": true,
-        "isolatedModules": true,
-        "outDir": "dist",
-        "noUnusedLocals": true
-    },
-    "exclude": [
-        "node_modules",
-        ".cache",
-        "dist",
-        "**/dist",
-        "**/.cache",
-        "**/node_modules"
-    ]
+        
+    }
 }

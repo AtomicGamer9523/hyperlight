@@ -1,6 +1,16 @@
 {
-    "name": "hyperlight",
-    "dependencies": {
-        "hyperapp": "2.0.18"
-    }
+  "name": "hyperlight",
+  "version": "0.1.0",
+  "description": "An extremely light JS framework ;)",
+  "main": "./packages/hyperlight/src/index.ts",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/AtomicGamer9523/hyperlight.git"
+  },
+  "author": "AtomicGamer9523",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/AtomicGamer9523/hyperlight/issues"
+  },
+  "homepage": "https://github.com/AtomicGamer9523/hyperlight#readme"
 }

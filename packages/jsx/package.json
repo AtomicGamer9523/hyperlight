@@ -1,8 +1,0 @@
-{
-  "name": "@hyperlight/jsx",
-  "version": "0.0.19",
-  "description": "JSX support for Hyperlight.",
-  "type": "module",
-  "module": "dist/index.js",
-  "types": "dist/index.d.ts"
-}
