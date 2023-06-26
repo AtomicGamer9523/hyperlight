@@ -1,14 +1,15 @@
 {
   "name": "hyperlight",
   "version": "0.1.0",
-  "description": "An extremely light JS framework ;)",
-  "main": "./packages/hyperlight/src/index.ts",
+  "description": "HyperLight JS Library",
+
+  "author": "Atomicgamer9523",
+  "license": "MIT",
+
   "repository": {
     "type": "git",
     "url": "git+https://github.com/AtomicGamer9523/hyperlight.git"
   },
-  "author": "AtomicGamer9523",
-  "license": "MIT",
   "bugs": {
     "url": "https://github.com/AtomicGamer9523/hyperlight/issues"
   },

@@ -1,2 +1,11 @@
+# IDE
+.vscode
+
+# Build
+node_modules
 target
+
+# Metdata
+package-lock.json
 *.lock
+/server/.patch

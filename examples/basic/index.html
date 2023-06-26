@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>HyperLight Basic Example</title>
+    <script type="importmap">
+        {
+            "imports": {
+                "hyperlight": "http://localhost:8080/hyperlight/index.js",
+                "anonymous": "http://localhost:8080/anonymous/index.js"
+            }
+        }
+    </script>
+    <script src="index.js"></script>
+</head>
+<body align="center">
+    <h1>
+        <h-counter>clicks: 0</h-counter>
+    </h1>
+    <button handler="increment-button-handler">Increment</button>
+    <button handler="decrement-button-handler">Decrement</button>
+</body>
+</html>

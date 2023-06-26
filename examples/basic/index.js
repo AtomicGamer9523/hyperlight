@@ -1,12 +1,7 @@
-# HyperLight
+(async () => {
+const/**@type {import('../../packages/hyperlight/index')}*/h = await import("hyperlight");
+const/**@type {import('../../packages/anonymous/index')}*/a = await import("anonymous");
 
-## An extremely light JS framework ;)
-
-### [Examples](./examples/)
-
-### [Developing Docs](./server/)
-
-```js
 class CounterComponent extends h.HyperLightComponent {
     static name = "counter";
 
@@ -25,7 +20,6 @@ class CounterComponent extends h.HyperLightComponent {
         this.addHandler('decrement-button-handler', 'click', _event => {
             this.state$--;
         });
-        
     }
     onRender() {
         this.innerText = `clicks: ${this.state$}`;
@@ -36,10 +30,7 @@ class CounterComponent extends h.HyperLightComponent {
     }
 }
 CounterComponent.link();
-```
 
-```html
-<h-counter>clicks: 0</h-counter>
-<button handler="increment-button-handler">Increment</button>
-<button handler="decrement-button-handler">Decrement</button>
-```
+
+
+})();

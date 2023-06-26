@@ -1,5 +1,4 @@
 [workspace]
 members = [
-    "example",
     "packages/hyper"
 ]
