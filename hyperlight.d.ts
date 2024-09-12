@@ -7,39 +7,57 @@
  * 
  * <script>
  *     // User updates their language preference to Spanish.
- *     HyperLight.session.save("lang", "es");
+ *     HyperLight.save("lang", "es");
+ * 
+ *     function randHex(length) {
+ *         const gen = () => Math.floor(Math.random() * 0xF).toString(0xF);
+ *         return Array.from({ length }, gen).join('');
+ *     }
  * </script>
  * 
  * <img
- *     src="https://example.com/image.jpg"
+ *     $src = "https://dummyimage.com/100x50/${randHex(6)}/${randHex(6)}.png&text=Example"
+ *     $alt = "${HyperLight.get('lang') === 'es' ? 'Ejemplo' : 'Example'}"
  *     s.width = "100px"
- *     s.height = "100px"
- *     alt = "An example image"
- *     eval = "if (HyperLight.session.get('lang') === 'es') {
- *         // 'this' refers to the current element.
- *         this.alt = 'Una imagen de ejemplo';
- *     }"
+ *     s.height = "50px"
  *     lazyload
  * ></img>
+ * 
+ * <div eval = "console.log('This is a div', this)">
+ *     <span s.color = "#${randHex(6)}">Example</span>
+ * </div>
  * ```
  * 
- * @version 1.0.0
+ * @version 3.0.1
  * @license MIT
 */
 interface HyperLight {
     /**
-     * Whether the observer should automatically close after the DOM is loaded.
+     * Whether the observer will automatically close after the DOM is loaded.
      * 
      * This is recommended for performance reasons.
      * Especially when you know that more elements will NOT be added to the DOM.
      * 
      * Defaults to `true`.
      * 
-     * @type {boolean}
-     * @since 1.0.0
+     * @returns {boolean} If the observer will automatically close.
+     * @since 3.0.0
      * @public
     */
-    autoCloseObserver: boolean;
+    get autoCloseObserver(): boolean;
+    /**
+     * Whether to automatically close the observer after the DOM is loaded.
+     * 
+     * This is recommended for performance reasons.
+     * Especially when you know that more elements will NOT be added to the DOM.
+     * 
+     * Defaults to `true`.
+     * 
+     * @param {boolean} value If the observer will automatically close.
+     * @since 3.0.0
+     * @public
+    */
+    set autoCloseObserver(value: boolean);
     /**
      * Allows for manual starting of the observer.
      * 
@@ -47,7 +65,7 @@ interface HyperLight {
      * 
      * @function
      * @returns {void}
-     * @since 1.0.0
+     * @since 3.0.0
      * @public
     */
     openObserver(): void;
@@ -57,93 +75,42 @@ interface HyperLight {
      * This method is by default called when the DOM is loaded.
      * You may disable this by setting {@link autoCloseObserver} to `false`.
      * Or you may re-open the observer by calling {@link openObserver}.
-    */
-    closeObserver(): void;
-}
-declare namespace HyperLight {
-    /**
-     * Whether the observer should automatically close after the DOM is loaded.
-     * 
-     * This is recommended for performance reasons.
-     * Especially when you know that more elements will NOT be added to the DOM.
-     * 
-     * Defaults to `true`.
-     * 
-     * @type {boolean}
-     * @since 1.0.0
-     * @public
-    */
-    export var autoCloseObserver: boolean;
-    /**
-     * Allows for manual starting of the observer.
-     * 
-     * You may use this, but don't forget to {@link closeObserver close} when you're done.
      * 
      * @function
      * @returns {void}
-     * @since 1.0.0
+     * @since 3.0.0
      * @public
     */
-    export function openObserver(): void;
+    closeObserver(): void;
     /**
-     * Allows for manual closing of the observer.
+     * Saves a value to the session storage.
      * 
-     * This method is by default called when the DOM is loaded.
-     * You may disable this by setting {@link autoCloseObserver} to `false`.
-     * Or you may re-open the observer by calling {@link openObserver}.
-    */
-    export function closeObserver(): void;
-    /**
-     * Session storage methods.
-     * 
-     * This is a utility wrapper around the `sessionStorage` object.
-     * 
-     * Usefull for things like saving language preferences, etc.
-     * 
-     * Example:
-     * ```js
-     * HyperLight.session.save("lang", "en");
-     * 
-     * console.log(HyperLight.session.get("lang")); // "en"
-     * 
-     * HyperLight.session.rm("lang");
-     * ```
-     * 
-     * @namespace session
-     * @since 1.0.0
+     * @param {string} key Key to save the value under.
+     * @param {string} value Value associated with the key.
+     * @returns {void} Nothing.
+     * @since 3.0.1
      * @public
     */
-    export namespace session {
-        /**
-         * Saves a value to the session storage.
-         * 
-         * @param {string} key Key to save the value under.
-         * @param {string} value Value associated with the key.
-         * @returns {void} Nothing.
-         * @since 1.0.0
-         * @public
-        */
-        export function save(key: string, value: string): void;
-        /**
-         * Attempts to get a value from the session storage.
-         * 
-         * This method may return `undefined` if the key does not exist.
-         * 
-         * @param {string} key Key to get the value from.
-         * @returns {string | undefined} Value associated with the key (or `undefined`).
-         * @since 1.0.0
-         * @public
-        */
-        export function get(key: string): string | undefined;
-        /**
-         * Removes a value from the session storage.
-         * 
-         * @param {string} key Key to remove the value from.
-         * @returns {boolean} Whether the key was initially present.
-         * @since 1.0.0
-         * @public
-        */
-        export function rm(key: string): boolean;
-    }
+    save(key: string, value: string): void;
+    /**
+     * Attempts to get a value from the session storage.
+     * 
+     * This method may return `undefined` if the key does not exist.
+     * 
+     * @param {string} key Key to get the value from.
+     * @returns {string | undefined} Value associated with the key (or `undefined`).
+     * @since 3.0.1
+     * @public
+    */
+    get(key: string): string | undefined;
+    /**
+     * Removes a value from the session storage.
+     * 
+     * @param {string} key Key to remove the value from.
+     * @returns {boolean} Whether the key was initially present.
+     * @since 3.0.1
+     * @public
+    */
+    rm(key: string): boolean;
 }
 declare const HyperLight: HyperLight;

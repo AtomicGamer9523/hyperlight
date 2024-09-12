@@ -4,11 +4,26 @@
     'use strict';
 
     /**
-     * Very simple hashing function, returns 16 hex characters.
+     * Evaluates the given code in a safe way. Returns a potential result.
      * 
-     * @returns {string} 16 hex characters
+     * @this {HTMLElement | undefined} Element to use in the code
+     * @param {string} code Code to evaluate
+     * @param {any[]} args Arguments to pass to the function
+     * @returns {unknown} Potential result of the code
     */
-    const uuid = () => crypto.randomUUID().replace(/-/g, '');
+    function safeEval(code, ...args) {
+        try {
+            /**@type {Function}*/
+            const func = eval(code);
+            if (typeof func !== 'function') throw new Error(
+                "Code must be the body of a function"
+            );
+            return func.call(this, ...args);
+        } catch (e) {
+            console.error("[Hyperlight] Error in evaluation:", e);
+        }
+        return undefined;
+    }
 
     /**
      * Modifies the given element based on its attributes
@@ -45,86 +60,129 @@
      * </style>
      * ```
      * 
-     * @param {HTMLElement} element HTML element to modify
-     * @returns {void}
-     */
-    function elementModifier(element) {
-        if (element.hasAttribute('hyperlight')) return;
-        element.setAttribute('hyperlight', uuid());
-
-        if (element.hasAttribute('lazyload')) {
-            element.removeAttribute('lazyload');
-            element.setAttribute('decoding', 'async');
-            element.setAttribute('loading', 'lazy');
+     * @this {HTMLElement} HTML Element with the given attribute
+     * @param {string} attr Attribute name (guaranteed to exist on the element)
+    */
+    function elementModifier(attr) {
+        // Lazy loading
+        if (attr === 'lazyload') {
+            this.removeAttribute('lazyload');
+            this.setAttribute('decoding', 'async');
+            this.setAttribute('loading', 'lazy');
         }
 
-        if (element.hasAttribute('eval')) {
-            const code = element.getAttribute('eval');
-            element.removeAttribute('eval');
-            try {
-                /**@type {Function}*/
-                const func = eval(`(function(){${code}})`);
-                if (typeof func !== 'function') throw new Error(
-                    "'eval' attribute must be the body of a function"
-                );
-                func.call(element);
-            } catch (e) {
-                console.error("[Hyperlight], Error in 'eval' attribute:", e);
-            }
+        // Code execution with this element (multiple expressions possible)
+        if (attr === 'eval') {
+            const code = this.getAttribute('eval');
+            this.removeAttribute('eval');
+            safeEval.apply(this, ["(function(){" + code + "})"]);
         }
 
-        for(const attr of element.getAttributeNames()) {
-            if (attr.startsWith('s.')) {
-                const value = element.getAttribute(attr);
-                element.removeAttribute(attr);
-                element.style.setProperty(attr.substring(2), value);
-            }
+        // Inline code execution with this element (single statement inside a string)
+        if (attr.startsWith('$')) {
+            const value = this.getAttribute(attr);
+            const name = attr.slice(1);
+            this.removeAttribute(attr);
+            const res = safeEval.apply(this, ["(function(){return `" + value + "`})"]);
+            this.setAttribute(name, res);
         }
+
+        // Style modification
+        if (!attr.startsWith('s.')) return;
+        
+        const value = this.getAttribute(attr);
+        const key = attr.substring(2);
+
+        this.removeAttribute(attr);
+
+        const res = safeEval.apply(this, ["(function(){return `" + value + "`})"]);
+        this.style.setProperty(key, res);
     }
 
-    function HyperLightMutationObserver(records) {
-        records.forEach(record => {
-            record.addedNodes.forEach(node => {
-                if (node.nodeType !== 1) return;
-                node.querySelectorAll('*')
-                    .forEach(elementModifier);
-            })
-        });
+    /**
+     * Checks if the given node is an element and modifies it
+     * if needed.
+     * 
+     * @param {HTMLElement} node Node to modify
+    */
+    function modNode(node) {
+        if (node.nodeType !== 1) return;
+        node.getAttributeNames().forEach(elementModifier, node);
     }
 
+    /**
+     * A simple Observer wrapper.
+     * 
+     * It observes the entire document and modifies elements
+     * Using the {@link modNode} function.
+     * 
+     * It IS observing by default.
+    */
     class HyperLightObserver extends MutationObserver {
+        /**
+         * Whether the observer should close automatically when the DOM is loaded.
+         * 
+         * @type {boolean}
+        */
         #auto_close;
+        /**
+         * Constructs a new HyperLightObserver.
+         * 
+         * @param {boolean | undefined} autoClose 
+        */
         constructor(autoClose = false) {
-            super(HyperLightMutationObserver);
+            super(c => c.forEach(r => r.addedNodes.forEach(modNode)));
             this.#auto_close = autoClose;
+            this.open();
         }
+        /**
+         * Closes the observer.
+         * 
+         * @returns {void}
+        */
         close() {
             this.disconnect();
         }
+        /**
+         * Opens the observer.
+         * 
+         * Observes the entire document.
+         * 
+         * @returns {void}
+        */
         open() {
             this.observe(document, {
                 childList: true,
                 subtree: true
             });
         }
+        /**@returns {boolean} If the observer should close automatically*/
         get autoClose() {
             return this.#auto_close;
         }
+        /**
+         * Sets whether the observer should close automatically.
+         * @param {boolean} value `true` or `false`
+        */
         set autoClose(value) {
-            if (value === true) this.#auto_close = true;
-            else this.#auto_close = false;
+            this.#auto_close = value === true;
         }
     }
 
+    /**
+     * Implementation of the HyperLight interface.
+     * 
+     * @implements {HyperLight}
+    */
     class HyperLightImpl {
         #observer;
         constructor() {
-            this.#observer = new HyperLightObserver(true);
-            this.#observer.open();
+            this.#observer = new HyperLightObserver();
             document.addEventListener('DOMContentLoaded', () => {
-                if (window["hyperlight"].autoClose)
-                    window["hyperlight"].close();
+                if (window["HyperLight"].autoCloseObserver)
+                    window["HyperLight"].closeObserver();
             });
+            this.#observer.open();
         }
         closeObserver() {
             this.#observer.close();
@@ -138,7 +196,18 @@
         set autoCloseObserver(value) {
             this.#observer.autoClose = value;
         }
+        save(k, v) {
+            window.localStorage.setItem(k, v);
+        }
+        get(k) {
+            return window.localStorage.getItem(k);
+        }
+        rm(k) {
+            const had = window.sessionStorage.getItem(k) !== null;
+            window.sessionStorage.removeItem(k);
+            return had;
+        }
     }
 
-    def("hyperlight", new HyperLightImpl());
+    def("HyperLight", new HyperLightImpl());
 });
