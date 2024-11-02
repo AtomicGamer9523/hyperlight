@@ -6,8 +6,9 @@ As simple as:
 
 ```html
 <script
-    src = "https://cdn.jsdelivr.net/gh/AtomicGamer9523/HyperLight@3.0.1/hyperlight.min.js"
-    integrity = "sha384-/DjHjZ/nq2BjCSELZ05S/AkPMx0e2THruAHBtbEmK0eZdQ8bUWkEr69FyKcZu5VT"
+    src = "https://raw.githubusercontent.com/AtomicGamer9523/hyperlight/refs/tags/3.0.2/hyperlight.min.js"
+    integrity = "sha384-snHoqY8ui+LKDw8TE81whtm5izNxzTsppNNJbSqZPVW35WTQrAxCpJb45+CBBfcL"
+    crossorigin = "anonymous"
 ></script>
 ```
 
