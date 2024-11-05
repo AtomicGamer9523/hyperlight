@@ -6,7 +6,7 @@ As simple as:
 
 ```html
 <script
-    src = "https://raw.githubusercontent.com/AtomicGamer9523/hyperlight/refs/tags/3.0.2/hyperlight.min.js"
+    src = "https://cdn.jsdelivr.net/gh/AtomicGamer9523/hyperlight/hyperlight.min.js"
     integrity = "sha384-snHoqY8ui+LKDw8TE81whtm5izNxzTsppNNJbSqZPVW35WTQrAxCpJb45+CBBfcL"
     crossorigin = "anonymous"
 ></script>
